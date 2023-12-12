@@ -1,7 +1,6 @@
 import Layout from './layout'
 import type { Metadata } from 'next'
 import AgreeButton from './_components/buttons/agreeButton';
-import Header from './_components/header/header';
 
 export const metadata: Metadata = {
   title: 'Driving Test - Selection Sort',
@@ -10,13 +9,20 @@ export const metadata: Metadata = {
 
 const orgOfPOC = "International Institute of Information Technology, Hyderabad";
 const nameOfPOC = "Gnaneswar K";
-const emailOfPOC = "gnanu2004@gmail.com";
+const emailOfPOC = "gnaneswar.kulindala@research.iiit.ac.in";
 const mobileOfPOC = "+91 79894 73223";
 
 export default function Home() {
   return (
     <Layout >
-      <Header />
+      <header
+        id='headerBlock'
+        className={'grid p-4 grid-cols-4 justify-around bg-gradient-to-r from-sky-600 via-blue-600 to-sky-600  shadow-lg'}
+      >
+        <div className={"px-4 font-sans text-2xl font-bold text-slate-50 col-span-4 justify-self-center"}>
+          Driving Test - Selection Sort
+        </div>
+      </header>
       <div className="flex flex-grow justify-center items-start overflow-y-auto">
         <div className="container flex-grow flex flex-col justify-evenly p-10 text-gray-900 px-24">
           <h1 className="text-2xl">Consent Form </h1>
@@ -44,7 +50,7 @@ export default function Home() {
             Your<strong>&nbsp;data will remain confidential&nbsp;</strong>and
             will be used for research purposes only. The research may result in
             scientific publications, conference and seminar presentations, and
-            teaching. No Direct identifiers (ex: name, address, photo, video) will
+            teaching. No direct identifiers (ex: name, address, photo, video) will
             be collected as part of the survey.
           </p>
           {/* Update the point(s) of contact */}
