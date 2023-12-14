@@ -1,4 +1,4 @@
-"use client"
+"use client" // Client-side Component to allow for state changes.
 
 export default function ActionButton({
   children,
@@ -7,11 +7,11 @@ export default function ActionButton({
   disabled,
   handler,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
   type?: "primary" | "secondary"
-  id?: string;
-  disabled?: boolean;
-  handler?: Function;
+  id?: string
+  disabled?: boolean
+  handler?: Function
 }) {
   return (
     <button
@@ -33,4 +33,4 @@ export default function ActionButton({
       {children}
     </button>
   )
-};
+}

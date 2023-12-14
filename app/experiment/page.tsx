@@ -1,10 +1,116 @@
-"use client"
+"use client" // Client-side Component to allow for state changes and routing.
 
 import Layout from "../layout"
 import Instructions from "./instructions"
 import ActionButton from "../_components/buttons/actionButton"
 import ArrayElement from "../_components/buttons/arrayElements"
 import { useEffect, useState } from "react"
+import API from "../api"
+import { useAppSelector } from "@/lib/hooks"
+import { useRouter } from "next/navigation"
+
+// Selection Sort State Interface.
+interface SelectionSortState {
+  array: number[],
+  i: number,
+  max: number,
+  b: number,
+}
+
+// API Function Calls
+
+/**
+ * API call to create a run for a userId and set the runId.
+ * @param userId The userId of the user.
+ * @param setRunId Function to set the runId.
+ */
+const createRun = async (userId: string, setRunId: React.Dispatch<React.SetStateAction<string>>) => {
+  console.log("Creating runId.")
+  // API call.
+  await API
+    .post(
+      `/createRun`, JSON.stringify({
+        id: userId,
+        machineId: "selectionSort",
+      })
+    )
+    .then((response: any) => {
+      // Set the runId.
+      setRunId(response.data.id)
+    })
+    .catch((error: any) => {
+      console.log(error)
+    })
+}
+
+/**
+ * API call to update the Run parameters.
+ * @param payload Payload for the API.
+ * @param runId The runId of the current run.
+ * @param type The action performed.
+ * @param preState The state before the action.
+ * @param postState The state after the action.
+ */
+const updateRun = async (
+  payload: any,
+  runId: string,
+  type: string,
+  preState: SelectionSortState,
+  postState: SelectionSortState
+) => {
+  // If runId is undefined, then the user has not been initialised
+  if (runId === "") {
+    return
+  }
+  // Log the current state into the browser console.
+  console.log(JSON.stringify({
+    id: runId,
+    payload: payload === undefined ? {} : payload,
+    type: type,
+    preState: preState === undefined ? {} : preState,
+    postState: postState === undefined ? {} : postState,
+    timestamp: Date.now()
+  }))
+  // API call.
+  await API
+    .post(
+      `/updateRun`, JSON.stringify({
+        id: runId,
+        payload: payload === undefined ? {} : payload,
+        type: type,
+        preState: preState === undefined ? {} : preState,
+        postState: postState === undefined ? {} : postState,
+        timestamp: Date.now()
+      })
+    )
+    .then(response => {
+      console.log(response)
+      console.log(response.data)
+    })
+    .catch(error => {
+      console.log(error)
+    })
+}
+
+/**
+ * API call to update that the run is completed.
+ * @param id The userId of the user of the current run.
+ */
+const complete = async (id: string, setCompleted: React.Dispatch<React.SetStateAction<boolean>>) => {
+  let final = `/complete/` + id
+  // API call.
+  await API
+    .get(final)
+    .then(response => {
+      console.log(response)
+      console.log(response.data)
+      setCompleted(true)
+      // window.alert("Thank you for your participation.")
+    })
+    .catch(error => {
+      console.log(error)
+    })
+}
 
 // List of Actions
 const Action = Object.freeze({
@@ -19,7 +125,7 @@ const Action = Object.freeze({
   UpdateMax: 'UpdateMax',
   SwapMax: 'SwapMax',
   DecrementAndReset: 'DecrementAndReset',
-});
+})
 
 // List of Prompts
 const Prompts = Object.freeze({
@@ -36,15 +142,7 @@ const Prompts = Object.freeze({
   SwapMax: "Swapped the 'max' and boundary elements.",
   DecrementAndReset: "Value of 'b' decremented by 1 and 'i', 'max' reset to 0.",
   DecrementAndResetFail: "Value of 'b' cannot be decreased further.",
-});
-
-// Selection Sort State Interface.
-interface SelectionSortState {
-  array: number[],
-  i: number,
-  max: number,
-  b: number,
-};
+})
 
 /**
  * Function that creates an instance of a Selection Sort State.
@@ -55,44 +153,44 @@ interface SelectionSortState {
  * @returns SelectionSortState instance.
  */
 function createState(array: number[], i: number, max: number, b: number): SelectionSortState {
-  let state: SelectionSortState = {} as SelectionSortState;
+  let state: SelectionSortState = {} as SelectionSortState
 
-  state.array = array;
-  state.b = b;
-  state.i = i;
-  state.max = max;
+  state.array = array
+  state.b = b
+  state.i = i
+  state.max = max
 
-  return state;
-};
+  return state
+}
 
-const arrayLength = 6;
+const arrayLength = 6
 
 /**
  * Function to create a random array without duplicates.
  * @returns Array containing arrayLength numbers.
  */
 function createRandomArray() {
-  let array: number[] = [];
-  let count = arrayLength;
+  let array: number[] = []
+  let count = arrayLength
 
   while (count > 0) {
-    const number = Math.round(Math.random() * 10);
-    let noDuplicates = true;
+    const number = Math.round(Math.random() * 10)
+    let noDuplicates = true
 
     // Checking for duplicates.
     for (let index = 0; index < array.length && noDuplicates; index++) {
       if (array[index] === number)
-        noDuplicates = false;
-    };
+        noDuplicates = false
+    }
 
     // If no duplicates are present.
     if (noDuplicates) {
-      array.push(number);
-      count -= 1;
+      array.push(number)
+      count -= 1
     }
-  };
+  }
 
-  return array;
+  return array
 }
 
 // const state: SelectionSortState = {
@@ -111,10 +209,10 @@ function createRandomArray() {
  * @returns Updated past states array.
  */
 function handlePastStateUpdate(pastStates: SelectionSortState[], state: SelectionSortState) {
-  let newPastStateArray = pastStates.slice();
-  newPastStateArray.push({ ...state });
-  return newPastStateArray;
-};
+  let newPastStateArray = pastStates.slice()
+  newPastStateArray.push({ ...state })
+  return newPastStateArray
+}
 
 /**
  * Function to update the array containing list of future states.
@@ -123,140 +221,149 @@ function handlePastStateUpdate(pastStates: SelectionSortState[], state: Selectio
  * @returns Updated future states array.
  */
 function handleFutureStateUpdate(futureStates: SelectionSortState[], state: SelectionSortState) {
-  let newFutureStateArray = futureStates.slice();
-  newFutureStateArray.unshift({ ...state });
-  return newFutureStateArray;
-};
+  let newFutureStateArray = futureStates.slice()
+  newFutureStateArray.unshift({ ...state })
+  return newFutureStateArray
+}
 
-const initialArray = createRandomArray();
-const initialState = createState(initialArray, 0, 0, arrayLength);
+const initialArray = createRandomArray()
+const initialState = createState(initialArray, 0, 0, arrayLength)
 
 export default function Experiment() {
+  // Router for navigation between pages.
+  const router = useRouter()
   // Initialisation.
-  const [preState, setPreState] = useState<SelectionSortState>({} as SelectionSortState);
-  const [state, setState] = useState<SelectionSortState>(initialState);
-  const [pastStates, setPastStates] = useState<SelectionSortState[]>([]);
-  const [futureStates, setFutureStates] = useState<SelectionSortState[]>([]);
-  const [type, setType] = useState<string>(Action.Init);
-  const [prompt, setPrompt] = useState<string>(Prompts.Init);
+  const userId = useAppSelector((state) => state.userData.userId)
+  const [runId, setRunId] = useState<string>("")
+  const [preState, setPreState] = useState<SelectionSortState>({} as SelectionSortState)
+  const [state, setState] = useState<SelectionSortState>(initialState)
+  const [pastStates, setPastStates] = useState<SelectionSortState[]>([])
+  const [futureStates, setFutureStates] = useState<SelectionSortState[]>([])
+  const [type, setType] = useState<string>(Action.Init)
+  const [prompt, setPrompt] = useState<string>(Prompts.Init)
+  const [completed, setCompleted] = useState<boolean>(false)
 
   // Handlers.
   function handleIncrementI() {
     if (state.i < arrayLength - 1) {
-      setPreState({ ...state });
-      setPastStates(handlePastStateUpdate(pastStates, state));
-      setFutureStates([]);
-      setState(createState(state.array, state.i + 1, state.max, state.b));
-      setType(Action.Increment);
-      setPrompt(Prompts.Increment);
+      setPreState({ ...state })
+      setPastStates(handlePastStateUpdate(pastStates, state))
+      setFutureStates([])
+      setState(createState(state.array, state.i + 1, state.max, state.b))
+      setType(Action.Increment)
+      setPrompt(Prompts.Increment)
     }
-    else { setPrompt(Prompts.IncrementFail); }
-  };
+    else { setPrompt(Prompts.IncrementFail) }
+  }
 
   function handleUpdateMax() {
-    setPreState({ ...state });
-    setPastStates(handlePastStateUpdate(pastStates, state));
-    setFutureStates([]);
-    setState(createState(state.array, state.i, state.i, state.b));
-    setType(Action.UpdateMax);
-    setPrompt(Prompts.UpdateMax);
-  };
+    setPreState({ ...state })
+    setPastStates(handlePastStateUpdate(pastStates, state))
+    setFutureStates([])
+    setState(createState(state.array, state.i, state.i, state.b))
+    setType(Action.UpdateMax)
+    setPrompt(Prompts.UpdateMax)
+  }
 
   function handleSwapMax() {
-    let newArray = state.array.slice();
-    newArray[state.max] = state.array[state.b - 1];
-    newArray[state.b - 1] = state.array[state.max];
-    setPreState({ ...state });
-    setPastStates(handlePastStateUpdate(pastStates, state));
-    setFutureStates([]);
-    setState(createState(newArray, state.i, state.i, state.b));
-    setType(Action.SwapMax);
-    setPrompt(Prompts.SwapMax);
-  };
+    let newArray = state.array.slice()
+    newArray[state.max] = state.array[state.b - 1]
+    newArray[state.b - 1] = state.array[state.max]
+    setPreState({ ...state })
+    setPastStates(handlePastStateUpdate(pastStates, state))
+    setFutureStates([])
+    setState(createState(newArray, state.i, state.i, state.b))
+    setType(Action.SwapMax)
+    setPrompt(Prompts.SwapMax)
+  }
 
   function handleDecrementAndReset() {
     if (state.b > 0) {
-      setPreState({ ...state });
-      setPastStates(handlePastStateUpdate(pastStates, state));
-      setFutureStates([]);
-      setState(createState(state.array, 0, 0, state.b - 1));
-      setType(Action.DecrementAndReset);
-      setPrompt(Prompts.DecrementAndReset);
+      setPreState({ ...state })
+      setPastStates(handlePastStateUpdate(pastStates, state))
+      setFutureStates([])
+      setState(createState(state.array, 0, 0, state.b - 1))
+      setType(Action.DecrementAndReset)
+      setPrompt(Prompts.DecrementAndReset)
     }
     else { setPrompt(Prompts.DecrementAndResetFail) }
-  };
+  }
 
   function handleUndo() {
-    let newPastStates = pastStates.slice();
-    newPastStates.pop();
-    setPreState({ ...state });
-    setPastStates(newPastStates);
-    setFutureStates(handleFutureStateUpdate(futureStates, state));
-    setState(pastStates[pastStates.length - 1]);
-    setType(Action.Undo);
-    setPrompt(Prompts.Undo);
-  };
+    let newPastStates = pastStates.slice()
+    newPastStates.pop()
+    setPreState({ ...state })
+    setPastStates(newPastStates)
+    setFutureStates(handleFutureStateUpdate(futureStates, state))
+    setState(pastStates[pastStates.length - 1])
+    setType(Action.Undo)
+    setPrompt(Prompts.Undo)
+  }
 
   function handleRedo() {
-    let newFutureStates = futureStates.slice();
-    newFutureStates.shift();
-    setPreState({ ...state });
-    setPastStates(handlePastStateUpdate(pastStates, state));
-    setFutureStates(newFutureStates);
-    setState(futureStates[0]);
-    setType(Action.Redo);
-    setPrompt(Prompts.Redo);
-  };
+    let newFutureStates = futureStates.slice()
+    newFutureStates.shift()
+    setPreState({ ...state })
+    setPastStates(handlePastStateUpdate(pastStates, state))
+    setFutureStates(newFutureStates)
+    setState(futureStates[0])
+    setType(Action.Redo)
+    setPrompt(Prompts.Redo)
+  }
 
   function handleReset() {
-    setPreState({ ...state });
-    setPastStates([]);
-    setFutureStates([]);
-    setState(initialState);
-    setType(Action.Reset);
-    setPrompt(Prompts.Reset);
-  };
+    setPreState({ ...state })
+    setPastStates([])
+    setFutureStates([])
+    setState(initialState)
+    setType(Action.Reset)
+    setPrompt(Prompts.Reset)
+  }
 
   function handleSubmit() {
-    setPreState({ ...state });
-    setPastStates(handlePastStateUpdate(pastStates, state));
-    setFutureStates([]);
-    setState(state);
-    setType(Action.Submit);
-    setPrompt(Prompts.Submit);
-  };
+    setPreState({ ...state })
+    setPastStates(handlePastStateUpdate(pastStates, state))
+    setFutureStates([])
+    setState(state)
+    setType(Action.Submit)
+    setPrompt(Prompts.Submit)
+  }
 
   function handleConfirmSubmit() {
-    setPreState({ ...state });
-    setPastStates(handlePastStateUpdate(pastStates, state));
-    setFutureStates([]);
-    setState({ ...state });
-    setType(Action.ConfirmSubmit);
-    setPrompt(Prompts.ConfirmSubmit);
-  };
+    setPreState({ ...state })
+    setPastStates(handlePastStateUpdate(pastStates, state))
+    setFutureStates([])
+    setState({ ...state })
+    setType(Action.ConfirmSubmit)
+    setPrompt(Prompts.ConfirmSubmit)
+    if (runId !== "") { complete(runId, setCompleted) }
+  }
 
   function handleCancelSubmit() {
-    setPreState({ ...state });
-    setPastStates(handlePastStateUpdate(pastStates, state));
-    setFutureStates([]);
-    setState({ ...state });
-    setType(Action.CancelSubmit);
-    setPrompt(Prompts.CancelSubmit);
-  };
+    setPreState({ ...state })
+    setPastStates(handlePastStateUpdate(pastStates, state))
+    setFutureStates([])
+    setState({ ...state })
+    setType(Action.CancelSubmit)
+    setPrompt(Prompts.CancelSubmit)
+  }
 
   // Log actions.
   useEffect(() => {
-    const postState = state;
-    const payload = undefined;
-    console.log(JSON.stringify({
-      id: "testing",
-      payload: payload === undefined ? {} : payload,
-      type: type,
-      preState: preState === undefined ? {} : preState,
-      postState: postState === undefined ? {} : postState,
-      timestamp: Date.now(),
-    }))
-  }, [type, preState, state]);
+    console.log(userId)
+    // Generating Run ID
+    if (userId !== "" && runId === "") {
+      // console.log(userId)
+      createRun(userId, setRunId)
+    }
+    else if (userId !== "") {
+      updateRun({}, runId, type, preState, state)
+    }
+
+    if (completed) {
+      router.push('/thanks')
+    }
+  }, [runId, type, preState, state, completed])
 
   return (
     <Layout >
@@ -425,4 +532,4 @@ export default function Experiment() {
       <div className="text-center p-2 border-black border-t-2">Copyright &copy; 2023 Algodynamics.</div>
     </Layout>
   )
-};
+}

@@ -1,4 +1,4 @@
-"use client"
+"use client" // Client-side Component to allow for state changes.
 
 export default function ArrayElement({
   value,
@@ -6,10 +6,10 @@ export default function ArrayElement({
   handler,
   highlight
 }: {
-  value: any;
-  index: number;
-  handler?: Function;
-  highlight?: boolean;
+  value: any
+  index: number
+  handler?: Function
+  highlight?: boolean
 }) {
   return (
     <span
@@ -21,4 +21,4 @@ export default function ArrayElement({
       {value}
     </span>
   )
-};
+}
