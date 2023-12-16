@@ -133,9 +133,9 @@ const Prompts = Object.freeze({
   Undo: "Undo successful.",
   Redo: "Redo successful.",
   Reset: "Experiment reset to initial state.",
-  Submit: "",
+  Submit: "Confirm submission?",
   CancelSubmit: "Submission cancelled.",
-  ConfirmSubmit: "Confirm submission?",
+  ConfirmSubmit: "Submission confirmed!",
   Increment: "Value of 'i' increased by 1.",
   IncrementFail: "Value of 'i' cannot be increased anymore.",
   UpdateMax: "Value of 'max' updated.",
@@ -423,16 +423,14 @@ export default function Experiment() {
               </div>
             </div>
             {/* Controls */}
-            <div
-              className={"flex flex-col justify-evenly items-center w-full h-full "}
-            >
+            <div className={"flex flex-col justify-evenly items-center w-full h-full "}>
               {/* Prompt */}
               <div className="w-full">
                 <div
                   className={"text-center m-4 p-2 rounded-md border-2 "
                     + ((prompt === Prompts.DecrementAndResetFail || prompt === Prompts.IncrementFail)
                       ? "bg-red-300 border-red-400"
-                      : (prompt === Prompts.DecrementAndReset || prompt === Prompts.Increment || prompt === Prompts.SwapMax || prompt === Prompts.UpdateMax)
+                      : (prompt === Prompts.DecrementAndReset || prompt === Prompts.Increment || prompt === Prompts.SwapMax || prompt === Prompts.UpdateMax || prompt === Prompts.ConfirmSubmit)
                         ? "bg-green-300 border-green-400"
                         : "bg-blue-300 border-blue-400"
                     )
