@@ -19,9 +19,9 @@ export default function Error({
 
   return (
     <div className={inter.className + " h-screen overflow-hidden flex flex-col bg-slate-50"}>
-      <div className={"px-4 font-sans text-l font-bold text-gray-950 col-span-4 justify-self-center"}>
+      <span className={"px-4 font-sans text-l font-bold text-gray-950 col-span-4 justify-self-center"}>
         Something went wrong while loading the experiment.
-      </div>
+      </span>
       <button
         type="button"
         className={"flex m-2 p-3 justify-center items-center rounded-md shadow-md bg-amber-300"}

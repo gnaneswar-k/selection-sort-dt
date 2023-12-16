@@ -89,7 +89,7 @@ export default function Information() {
         <h1 className="text-center font-bold text-lg">Procedure</h1>
         <ol className="list-decimal ps-5">
           <li>Click on suitable control to simulate next step of selection sort algorithm.</li>
-          <li>You can do <em>Undo</em> and <em>Redo</em> actions or <em>Reset</em> the experiment by clicking on the respective buttons as per your need.</li>
+          <li>You can <em>Undo</em> and <em>Redo</em> actions or <em>Reset</em> the experiment by clicking on the respective buttons as per your need.</li>
           <li>Click on the <em>Submit Run</em> button when you are done.</li>
         </ol>
       </div>

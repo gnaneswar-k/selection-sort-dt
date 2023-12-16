@@ -372,9 +372,9 @@ export default function Experiment() {
         id='headerBlock'
         className={'grid p-4 grid-cols-4 justify-around bg-gradient-to-r from-blue-600 from-25% to-sky-600  shadow-lg'}
       >
-        <div className={"px-4 font-sans text-2xl font-bold text-slate-50 col-span-3 justify-self-start"}>
+        <span className={"px-4 font-sans text-2xl font-bold text-slate-50 col-span-3 justify-self-start"}>
           Driving Test - Selection Sort
-        </div>
+        </span>
         <div className='col-span-1 flex justify-center items-center'>
           {/* Submit Button */}
           <button
@@ -403,7 +403,7 @@ export default function Experiment() {
                 + (type == Action.Submit ? "backdrop-blur-md" : "hidden")}
             >
               <div className="flex flex-col justify-center items-center align-middle bg-slate-50 text-lg w-1/3 h-1/3 shadow-lg p-2 rounded-md border-black border-2">
-                <div className="flex text-center">Comfirm Submission?</div>
+                <span className="flex text-center">Comfirm Submission?</span>
                 <div className="flex flex-row justify-between p-2">
                   <ActionButton
                     id="confirm"
