@@ -1,11 +1,5 @@
 import Layout from './layout'
-import type { Metadata } from 'next'
 import AgreeButton from './_components/buttons/agreeButton'
-
-export const metadata: Metadata = {
-  title: 'Driving Test - Selection Sort',
-  description: 'An Algodynamics Driving Test for selection sort',
-}
 
 const orgOfPOC: string = "International Institute of Information Technology, Hyderabad";
 const nameOfPOC: string = "Gnaneswar Kulindala";
