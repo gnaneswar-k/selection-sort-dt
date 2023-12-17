@@ -356,14 +356,15 @@ export default function Experiment() {
       // console.log(userId)
       createRun(userId, setRunId)
     }
-    else if (userId !== "") {
-      updateRun({}, runId, type, preState, state)
-    }
-
-    if (completed) {
+    // Redirect upon completion.
+    else if (completed) {
       router.push('/thanks')
     }
-  }, [runId, type, preState, state, completed])
+    // Log run actions.
+    else if (runId !== "") {
+      updateRun({}, runId, type, preState, state)
+    }
+  }, [router, userId, runId, type, preState, state, completed])
 
   return (
     <Layout >

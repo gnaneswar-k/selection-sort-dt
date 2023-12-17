@@ -29,7 +29,7 @@ function AgreeButton() {
       console.log("Redirecting to experiment.")
       router.push('/experiment')
     }
-  }, [userId])
+  }, [router, userId])
 
   // Function to update the userId.
   const dispatch = useAppDispatch();
