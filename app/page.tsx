@@ -1,6 +1,6 @@
 import Layout from './layout'
 import type { Metadata } from 'next'
-import AgreeButton from './_components/buttons/agreeButton'
+import AgreeButton from './_components/_buttons/agreeButton'
 
 export const metadata: Metadata = {
   title: 'Driving Test - Selection Sort',

@@ -2,12 +2,13 @@
 
 import Layout from "../layout"
 import Instructions from "./instructions"
-import ActionButton from "../_components/buttons/actionButton"
-import ArrayElement from "../_components/buttons/arrayElements"
+import ActionButton from "../_components/_buttons/actionButton"
+import ArrayElement from "../_components/_buttons/arrayElements"
 import { useEffect, useState } from "react"
 import API from "../api"
 import { useAppSelector } from "@/lib/hooks"
 import { useRouter } from "next/navigation"
+import CreateArray from "../_components/_functions/createArray"
 
 // Selection Sort State Interface.
 interface SelectionSortState {
@@ -454,12 +455,7 @@ export default function Experiment() {
                     <span className="p-2">value:</span>
                     <span>index:</span>
                   </div>
-                  {state.array.map((value, index) => {
-                    return (<div className="flex flex-col justify-center items-center space-y-2" key={index}>
-                      <ArrayElement value={value} index={index} highlight={index === state.i} />
-                      <span>{index}</span>
-                    </div>)
-                  })}
+                  <CreateArray array={state.array} selected={state.i} />
                 </div>
               </div>
               {/* Buttons */}

@@ -1,7 +1,7 @@
 "use client" // Client-side Component to allow for store changes and routing.
 
 import Layout from '../layout'
-import ActionButton from '../_components/buttons/actionButton'
+import ActionButton from '../_components/_buttons/actionButton'
 import { useRouter } from 'next/navigation'
 import { useAppDispatch } from '@/lib/hooks'
 import { updateUserId } from '@/lib/features/userData/userDataSlice'
