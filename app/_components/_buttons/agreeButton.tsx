@@ -47,13 +47,14 @@ function AgreeButton() {
     input: string,
     router: ReturnType<typeof useRouter>,
     client: AxiosInstance | null,
-    userId: string,
     setUserId: Function,
   ) => {
     console.log("Entered getAlgorithm")
     // Path to use getAlgorithm API.
     let final = "/getAlgorithm/" + input
     if (!client) {
+      // Update userId in the store for accessing across pages.
+      setUserId(input)
       // Redirect to the experiment.
       router.push('/experiment')
     }
@@ -114,7 +115,7 @@ function AgreeButton() {
           // Store userId in local storage.
           localStorage.setItem("userID", input)
           // Get the algorithmId.
-          getAlgorithm(input, router, client, userId, setUserId)
+          getAlgorithm(input, router, client, setUserId)
         }
         else
           alert("Please enter your roll number to proceed further!")
@@ -123,7 +124,7 @@ function AgreeButton() {
     // When no client is provided.
     else {
       // Get the algorithmId.
-      getAlgorithm("input", router, client, userId, setUserId)
+      getAlgorithm("testUserID", router, client, setUserId)
     }
   }
 

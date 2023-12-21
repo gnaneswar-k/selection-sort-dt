@@ -27,21 +27,26 @@ interface SelectionSortState {
  */
 const createRun = async (userId: string, setRunId: React.Dispatch<React.SetStateAction<string>>) => {
   console.log("Creating runId.")
-  // API call.
-  await API
-    .post(
-      `/createRun`, JSON.stringify({
-        id: userId,
-        machineId: "selectionSort",
+  // If API Gateway is defined.
+  if (API.getUri() !== undefined) {
+    // API call.
+    await API
+      .post(
+        `/createRun`, JSON.stringify({
+          id: userId,
+          machineId: "heapSort",
+        })
+      )
+      .then((response: any) => {
+        // Set the runId.
+        setRunId(response.data.id)
       })
-    )
-    .then((response: any) => {
-      // Set the runId.
-      setRunId(response.data.id)
-    })
-    .catch((error: any) => {
-      console.log(error)
-    })
+      .catch((error: any) => {
+        console.log(error)
+      })
+  }
+  // If testing.
+  else { setRunId("testRunID") }
 }
 
 /**
@@ -59,7 +64,7 @@ const updateRun = async (
   preState: SelectionSortState,
   postState: SelectionSortState
 ) => {
-  // If runId is undefined, then the user has not been initialised
+  // If runId is undefined, then the user has not been initialised.
   if (runId === "") {
     return
   }
@@ -72,45 +77,53 @@ const updateRun = async (
     postState: postState === undefined ? {} : postState,
     timestamp: Date.now()
   }))
-  // API call.
-  await API
-    .post(
-      `/updateRun`, JSON.stringify({
-        id: runId,
-        payload: payload === undefined ? {} : payload,
-        type: type,
-        preState: preState === undefined ? {} : preState,
-        postState: postState === undefined ? {} : postState,
-        timestamp: Date.now()
+  // If API Gateway is defined.
+  if (API.getUri() !== undefined) {
+    // API call.
+    await API
+      .post(
+        `/updateRun`, JSON.stringify({
+          id: runId,
+          payload: payload === undefined ? {} : payload,
+          type: type,
+          preState: preState === undefined ? {} : preState,
+          postState: postState === undefined ? {} : postState,
+          timestamp: Date.now()
+        })
+      )
+      .then(response => {
+        console.log(response)
+        console.log(response.data)
       })
-    )
-    .then(response => {
-      console.log(response)
-      console.log(response.data)
-    })
-    .catch(error => {
-      console.log(error)
-    })
+      .catch(error => {
+        console.log(error)
+      })
+  }
 }
 
 /**
  * API call to update that the run is completed.
  * @param id The userId of the user of the current run.
+ * @param setCompleted Function to set the status to completed.
  */
 const complete = async (id: string, setCompleted: React.Dispatch<React.SetStateAction<boolean>>) => {
-  let final = `/complete/` + id
-  // API call.
-  await API
-    .get(final)
-    .then(response => {
-      console.log(response)
-      console.log(response.data)
-      setCompleted(true)
-      // window.alert("Thank you for your participation.")
-    })
-    .catch(error => {
-      console.log(error)
-    })
+  let endpoint = `/complete/` + id
+  // If API Gateway is defined.
+  if (API.getUri() !== undefined) {
+    // API call.
+    await API
+      .get(endpoint)
+      .then(response => {
+        console.log(response)
+        console.log(response.data)
+        setCompleted(true)
+        // window.alert("Thank you for your participation.")
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }
+  else { setCompleted(true) }
 }
 
 // List of Actions
